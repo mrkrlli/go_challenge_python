@@ -1,0 +1,30 @@
+things to look for
+
+version:
+tempo:
+tracks with each track containing:
+	id
+	name
+	16 steps
+
+
+patterns I notice
+version:
+	-starts at hex offset 0xe (index 14) (this value is included), ends at the first 00 hex value 
+	-encode the following bytes into ascii to get the version (ex. "0.808-alpha")
+
+
+tempo:
+	-the tempo is encoded as 32 bit floating point number with little endian byte order 
+		-8 hexadecimal digits (4 bytes, each represented by 2 hexadecimal digits), since each digit is 4 bits
+		-starting at hex offset 0x2e (index 46), ending at index 50
+
+tracks:
+	overall, starts at hex offset 0x32 (index 50) (this value is included) -> convert this to decimal to get the first track's ID
+
+	for each track:
+		ID: encode the byte at index 0 (for the given track), to get the ID
+		name: starts at index 5 (for the given track). starting here, convert the next hex values to ascii for the track name. STOP when you reach a hex value of 00 or 01 (this is where the 16 steps begin)
+		16 steps: starts at the first hex value after the name that is 00 or 01. 01 represents a triggered step, 00 reprents an empty step. This will continue for 16 bytes, after which the next track's information begins.
+
+
